@@ -77,8 +77,14 @@
             width: auto;
             margin: 5px;
         }
+
+        .error {
+            color: red;
+            font-size: 16px;
+            margin-top: 10px;
+        }
     </style>
-<script defer="" data-domain="abhurchalets.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+<script defer="" data-domain="abhurchalets.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script><script defer="" data-domain="abhurchalits.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
 <body>
     <h1>مرحبا بكم في مجموعة شاليهات ابحر الشمالية</h1>
 
@@ -119,13 +125,23 @@
         <div class="col">
             <div class="form-group">
                 <label for="date">التاريخ:</label>
-                <input type="date" id="date" onchange="updatePrice();">
+                <input type="date" id="date" onchange="checkDateMatch();">
             </div>
         </div>
     </div>
 
+    <!-- رسالة التحذير عند اختيار تاريخ غير متوافق -->
+    <p id="dateError" class="error hidden">التاريخ المختار لا يتوافق مع اليوم المحدد. يرجى تعديل التاريخ.</p>
+
     <p id="price"></p>
     <div id="description"></div>
+
+    <!-- رابط المزيد من الصور -->
+    <p>
+        <a href="https://67224a3ee5ac0.site123.me/" target="_blank" style="color: blue; text-decoration: underline;">
+            لمزيد من الصور يرجى الضغط هنا
+        </a>
+    </p>
 
     <div>
         <button class="button" id="whatsappBtn">اكمل الحجز عن طريق الوتساب</button>
@@ -156,11 +172,10 @@
     </div>
 
     <script>
-        // Ensure jQuery is loaded correctly by WordPress
         $(document).ready(function() {
             const chalets = {
-                "شاليه المثلث الذهبي1": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description:  ["مجلس رجالي بجلسه خارجيه", "مجلس نسائي بجلسه خارجية", "غرفة نوم ", "3 دورات مياه مياه", "مسبح للكبار", "مسبح لللصغار بالعاب مائية",  "مطبخ"] },
-                "شاليه المثلث الذهبي2": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفة نوم كبيرة", "مجلس رئيسي", "جلسه خارجية جميلة", "دورتين مياه", "مسبح بحاجز",  "مطبخ"] },
+                "شاليه المثلث الذهبي1": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["مجلس رجالي بجلسه خارجيه", "مجلس نسائي بجلسه خارجية", "غرفة نوم ", "3 دورات مياه مياه", "مسبح للكبار", "مسبح لللصغار بالعاب مائية", "مطبخ"] },
+                "شاليه المثلث الذهبي2": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفة نوم كبيرة", "مجلس رئيسي", "جلسه خارجية جميلة", "دورتين مياه", "مسبح بحاجز", "مطبخ"] },
                 "شاليه درة جده 3": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفة نوم بدورة مياه", "مجلس رجال", "دورة مياه", "مسبح", "غرفة اطفال", "العاب أطفال", "مطبخ", "صالة بدورة مياه"] },
                 "شاليه درة جده 2": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفتين نوم", "صاله", "حمام", "مسبح", "العاب أطفال مائية", "مطبخ", "جلسه خارجية متنوعه"] },
                 "شاليه يونيو": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفة نوم", "مجلس", "حمام", "مسبح", "حديقة أطفال", "مطبخ", "صالة كبيرة"] },
@@ -191,43 +206,55 @@
             // Update Available Dates
             function updateAvailableDates(dayType) {
                 const dateInput = $('#date');
-                const today = new Date();
-                let minDate = new Date(today);
-                let maxDate = new Date(today);
-
-                if (dayType === "وسط الاسبوع") {
-                    minDate.setDate(today.getDate() + ((6 - today.getDay()) % 7));
-                    maxDate.setDate(minDate.getDate() + 4); // خمسة أيام
-                } else if (dayType === "ايام الويكيند") {
-                    minDate.setDate(today.getDate() + ((4 - today.getDay() + 7) % 7));
-                    maxDate.setDate(minDate.getDate() + 1); // يومان فقط
-                }
+                let minDate = new Date('2025-01-01');
+                let maxDate = new Date('2025-12-31');
 
                 dateInput.attr("min", minDate.toISOString().split("T")[0]);
                 dateInput.attr("max", maxDate.toISOString().split("T")[0]);
             }
 
+            // Check if Date matches Day
+            function checkDateMatch() {
+                const selectedDay = $('#days').val();
+                const selectedDate = new Date($('#date').val());
+                const dayOfWeek = selectedDate.toLocaleDateString('ar-SA', { weekday: 'long' });
+
+                if (selectedDay && selectedDate && dayOfWeek !== selectedDay) {
+                    $('#dateError').removeClass('hidden');
+                    return false;
+                } else {
+                    $('#dateError').addClass('hidden');
+                    return true;
+                }
+            }
+
             // Update Price
             function updatePrice() {
-                const chalet = $('#chalets').val();
-                const dayType = $('#dayType').val();
-                const day = $('#days').val();
-                const date = $('#date').val();
-                const priceDisplay = $('#price');
-                const descriptionDisplay = $('#description');
+                if (checkDateMatch()) {
+                    const chalet = $('#chalets').val();
+                    const dayType = $('#dayType').val();
+                    const day = $('#days').val();
+                    const date = $('#date').val();
+                    const priceDisplay = $('#price');
+                    const descriptionDisplay = $('#description');
 
-                if (chalet && dayType && day && date) {
-                    const price = chalets[chalet][dayType.replace(" ", "_")];
-                    priceDisplay.text(`مرحبا ضيفنا العزيز .. سعر  ${chalet} ليوم ${day} الموافق ${date} هو ${price} ريال سعودي`);
-                    descriptionDisplay.html("<ul>" + chalets[chalet].description.map(item => `<li>${item}</li>`).join("") + "</ul>");
-                } else {
-                    priceDisplay.text("");
-                    descriptionDisplay.html("");
+                    if (chalet && dayType && day && date) {
+                        const price = chalets[chalet][dayType.replace(" ", "_")];
+                        priceDisplay.text(`مرحبا ضيفنا العزيز .. سعر  ${chalet} ليوم ${day} الموافق ${date} هو ${price} ريال سعودي`);
+                        descriptionDisplay.html("<ul>" + chalets[chalet].description.map(item => `<li>${item}</li>`).join("") + "</ul>");
+                    } else {
+                        priceDisplay.text("");
+                        descriptionDisplay.html("");
+                    }
                 }
             }
 
             // Send WhatsApp Message
             function sendToWhatsApp() {
+                if (!checkDateMatch()) {
+                    return;
+                }
+
                 const chalet = $('#chalets').val();
                 const dayType = $('#dayType').val();
                 const day = $('#days').val();
@@ -246,27 +273,6 @@
                 window.open(url, "_blank");
             }
 
-            // Payment Methods Alert
-            function showPaymentAlert() {
-                const alertBox = document.createElement('div');
-                alertBox.id = "customAlert";
-                alertBox.innerHTML = `
-                    <p>سيتم تفعيل هذه الخدمة لاحقاً</p>
-                    <button onclick="closeCustomAlert()">إغلاق</button>
-                `;
-
-                const overlay = document.createElement('div');
-                overlay.id = "overlay";
-
-                document.body.appendChild(overlay);
-                document.body.appendChild(alertBox);
-            }
-
-            function closeCustomAlert() {
-                document.getElementById("customAlert").remove();
-                document.getElementById("overlay").remove();
-            }
-
             // Event Handlers
             $('#whatsappBtn').click(sendToWhatsApp);
             $('#bankDetailsBtn').click(function() {
@@ -280,7 +286,8 @@
             });
 
             // Initial Load
-            $('#date').attr("min", new Date().toISOString().split("T")[0]);
+            $('#date').attr("min", '2025-01-01'); // تحديد أول يوم في 2025 كأدنى تاريخ ممكن
+            $('#date').attr("max", '2025-12-31'); // تحديد آخر يوم في 2025 كأقصى تاريخ ممكن
 
             // Attach functions to events
             $('#chalets, #dayType').change(updateDayOptions);
