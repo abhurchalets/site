@@ -132,6 +132,20 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="duration">المدة:</label>
+                <select id="duration" onchange="updatePrice();">
+                    <option value="1">يوم</option>
+                    <option value="2">يومان</option>
+                    <option value="3">ثلاثة أيام</option>
+                    <option value="4">أربعة أيام</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
     <!-- رسالة التحذير عند اختيار تاريخ غير متوافق -->
     <p id="dateError" class="error hidden">التاريخ المختار لا يتوافق مع اليوم المحدد. يرجى تعديل التاريخ.</p>
 
@@ -237,11 +251,12 @@
                     const dayType = $('#dayType').val();
                     const day = $('#days').val();
                     const date = $('#date').val();
+                    const duration = $('#duration').val();
                     const priceDisplay = $('#price');
                     const descriptionDisplay = $('#description');
 
                     if (chalet && dayType && day && date) {
-                        const price = chalets[chalet][dayType.replace(" ", "_")];
+                        const price = chalets[chalet][dayType.replace(" ", "_")] * duration;
                         priceDisplay.text(`مرحبا ضيفنا العزيز .. سعر  ${chalet} ليوم ${day} الموافق ${date} هو ${price} ريال سعودي`);
                         descriptionDisplay.html("<ul>" + chalets[chalet].description.map(item => `<li>${item}</li>`).join("") + "</ul>");
                     } else {
@@ -261,13 +276,15 @@
                 const dayType = $('#dayType').val();
                 const day = $('#days').val();
                 const date = $('#date').val();
-                const price = chalets[chalet][dayType.replace(" ", "_")];
+                const duration = $('#duration').val();
+                const price = chalets[chalet][dayType.replace(" ", "_")] * duration;
 
                 const message = `
                     حجز شاليه: ${chalet}
                     النوع: ${dayType}
                     اليوم: ${day}
                     التاريخ: ${date}
+                    المدة: ${duration}
                     السعر: ${price} ريال
                 `;
 
@@ -293,7 +310,7 @@
 
             // Attach functions to events
             $('#chalets, #dayType').change(updateDayOptions);
-            $('#chalets, #dayType, #days, #date').change(updatePrice);
+            $('#chalets, #dayType, #days, #date, #duration').change(updatePrice);
         });
     </script>
 </body>
