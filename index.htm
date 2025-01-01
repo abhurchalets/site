@@ -1,0 +1,292 @@
+<!DOCTYPE html><html lang="ar"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحبا بك في مجموعة شاليهات ابحر الشمالية</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; direction: rtl; text-align: right; }
+        .hidden { display: none; }
+        .button { margin: 10px 0; padding: 10px; background-color: #00a3e7; color: white; border: none; cursor: pointer; }
+        .button:hover { background-color: #45a049; }
+        .details { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        ul { padding-left: 20px; }
+        .payment-icons { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        .payment-icons img { width: 50px; height: auto; cursor: pointer; }
+        #customAlert { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            background-color: white; 
+            padding: 20px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.5); 
+            z-index: 1000; 
+            border-radius: 8px;
+            text-align: center;
+        }
+        #customAlert button { 
+            margin-top: 10px; 
+            padding: 10px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 5px; 
+        }
+        #customAlert button:hover { background-color: #45a049; }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        #whatsappBtn, #paymentBtn {
+            display: inline-block;
+            width: auto;
+            margin: 5px;
+        }
+    </style>
+<script defer="" data-domain="abhurchalets.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+<body>
+    <h1>مرحبا بكم في مجموعة شاليهات ابحر الشمالية</h1>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="chalets">اختيار الشاليه:</label>
+                <select id="chalets" onchange="updatePrice();">
+                    <option value="">-- اختر الشاليه --</option>
+                    <option value="شاليه المثلث الذهبي1">شاليه المثلث الذهبي1</option>
+                    <option value="شاليه المثلث الذهبي2">شاليه المثلث الذهبي2</option>
+                    <option value="شاليه درة جده 1">شاليه درة جده 1</option>
+                    <option value="شاليه درة جده 2">شاليه درة جده 2</option>
+                    <option value="شاليه يونيو">شاليه يونيو</option>
+                    <option value="شاليه لافا">شاليه لافا</option>
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="dayType">نوع اليوم:</label>
+                <select id="dayType" onchange="updateDayOptions(); updatePrice();">
+                    <option value="">-- اختر نوع اليوم --</option>
+                    <option value="وسط الاسبوع">وسط الاسبوع</option>
+                    <option value="ايام الويكيند">ايام الويكيند</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="days">اليوم:</label>
+                <select id="days" onchange="updatePrice();"></select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="date">التاريخ:</label>
+                <input type="date" id="date" onchange="updatePrice();">
+            </div>
+        </div>
+    </div>
+
+    <p id="price"></p>
+    <div id="description"></div>
+
+    <div>
+        <button class="button" id="whatsappBtn">اكمل الحجز عن طريق الوتساب</button>
+        <button class="button" id="paymentBtn">ادفع الآن</button>
+    </div>
+
+    <div id="paymentMethods" class="hidden">
+        <div class="payment-icons">
+            <img src="https://iconape.com/wp-content/files/sz/20472/svg/Mada-01.svg" alt="مدى" onclick="showPaymentAlert();">
+            <img src="https://img.icons8.com/?size=100&amp;id=Sq0VNi1Afgmj&amp;format=png&amp;color=000000" alt="ماستر كارد" onclick="showPaymentAlert();">
+            <img src="https://iconape.com/wp-content/files/yl/370556/svg/370556.svg" alt="أبل باي" onclick="showPaymentAlert();">
+        </div>
+    </div>
+
+    <button class="button" id="bankDetailsBtn">عرض/إخفاء الحسابات البنكية</button>
+    <div id="bankDetails" class="hidden details">
+        <p>رقم الحساب بنك الانماء: 68200606941000</p>
+        <p>الايبان: SA8305000068200606941000</p>
+        <p>البنك الأهلي السعودي: 26753997000108</p>
+        <p>الايبان: SA2010000026753997000108</p>
+    </div>
+
+    <button class="button" id="policyBtn">عرض/إخفاء سياسة الحجز</button>
+    <div id="policy" class="hidden details">
+        <p>الدخول الساعة 4 مساءاً</p>
+        <p>الخروج الساعة 9 صباحاً</p>
+        <p>التامين 300 كاش غير مستردة لمن يتاخر عن الخروج عن الساعة 11 صبحاً</p>
+    </div>
+
+    <script>
+        // Ensure jQuery is loaded correctly by WordPress
+        $(document).ready(function() {
+            const chalets = {
+                "شاليه المثلث الذهبي1": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description:  ["مجلس رجالي بجلسه خارجيه", "مجلس نسائي بجلسه خارجية", "غرفة نوم ", "3 دورات مياه مياه", "مسبح للكبار", "مسبح لللصغار بالعاب مائية",  "مطبخ"] },
+                "شاليه المثلث الذهبي2": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفة نوم كبيرة", "مجلس رئيسي", "جلسه خارجية جميلة", "دورتين مياه", "مسبح بحاجز",  "مطبخ"] },
+                "شاليه درة جده 3": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفة نوم بدورة مياه", "مجلس رجال", "دورة مياه", "مسبح", "غرفة اطفال", "العاب أطفال", "مطبخ", "صالة بدورة مياه"] },
+                "شاليه درة جده 2": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفتين نوم", "صاله", "حمام", "مسبح", "العاب أطفال مائية", "مطبخ", "جلسه خارجية متنوعه"] },
+                "شاليه يونيو": { وسط_الاسبوع: 299, ايام_الويكيند: 399, description: ["غرفة نوم", "مجلس", "حمام", "مسبح", "حديقة أطفال", "مطبخ", "صالة كبيرة"] },
+                "شاليه لافا": { وسط_الاسبوع: 799, ايام_الويكيند: 999, description: ["مجلس كبير", "مجلس صغير", "3 دورات مياه", "مسبح للأطفال مع ألعاب مائية", "مراجيح وألعاب", "جلسات خارجية", "غرفة نوم ماستر مع دورة مياه", "منطقة شواء", "طاولة طعام"] }
+            };
+
+            // Update Day Options
+            function updateDayOptions() {
+                const dayType = $('#dayType').val();
+                const daysDropdown = $('#days');
+                daysDropdown.empty(); // Remove previous options
+
+                let days = [];
+                if (dayType === "وسط الاسبوع") {
+                    days = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء"];
+                } else if (dayType === "ايام الويكيند") {
+                    days = ["الجمعة", "الخميس"];
+                }
+
+                days.forEach(function(day) {
+                    const option = $('<option>', { value: day, text: day });
+                    daysDropdown.append(option);
+                });
+
+                updateAvailableDates(dayType);
+            }
+
+            // Update Available Dates
+            function updateAvailableDates(dayType) {
+                const dateInput = $('#date');
+                const today = new Date();
+                let minDate = new Date(today);
+                let maxDate = new Date(today);
+
+                if (dayType === "وسط الاسبوع") {
+                    minDate.setDate(today.getDate() + ((6 - today.getDay()) % 7));
+                    maxDate.setDate(minDate.getDate() + 4); // خمسة أيام
+                } else if (dayType === "ايام الويكيند") {
+                    minDate.setDate(today.getDate() + ((4 - today.getDay() + 7) % 7));
+                    maxDate.setDate(minDate.getDate() + 1); // يومان فقط
+                }
+
+                dateInput.attr("min", minDate.toISOString().split("T")[0]);
+                dateInput.attr("max", maxDate.toISOString().split("T")[0]);
+            }
+
+            // Update Price
+            function updatePrice() {
+                const chalet = $('#chalets').val();
+                const dayType = $('#dayType').val();
+                const day = $('#days').val();
+                const date = $('#date').val();
+                const priceDisplay = $('#price');
+                const descriptionDisplay = $('#description');
+
+                if (chalet && dayType && day && date) {
+                    const price = chalets[chalet][dayType.replace(" ", "_")];
+                    priceDisplay.text(`مرحبا ضيفنا العزيز .. سعر  ${chalet} ليوم ${day} الموافق ${date} هو ${price} ريال سعودي`);
+                    descriptionDisplay.html("<ul>" + chalets[chalet].description.map(item => `<li>${item}</li>`).join("") + "</ul>");
+                } else {
+                    priceDisplay.text("");
+                    descriptionDisplay.html("");
+                }
+            }
+
+            // Send WhatsApp Message
+            function sendToWhatsApp() {
+                const chalet = $('#chalets').val();
+                const dayType = $('#dayType').val();
+                const day = $('#days').val();
+                const date = $('#date').val();
+                const price = chalets[chalet][dayType.replace(" ", "_")];
+
+                const message = `
+                    حجز شاليه: ${chalet}
+                    النوع: ${dayType}
+                    اليوم: ${day}
+                    التاريخ: ${date}
+                    السعر: ${price} ريال
+                `;
+
+                const url = `https://wa.me/966566064451?text=${encodeURIComponent(message)}`;
+                window.open(url, "_blank");
+            }
+
+            // Payment Methods Alert
+            function showPaymentAlert() {
+                const alertBox = document.createElement('div');
+                alertBox.id = "customAlert";
+                alertBox.innerHTML = `
+                    <p>سيتم تفعيل هذه الخدمة لاحقاً</p>
+                    <button onclick="closeCustomAlert()">إغلاق</button>
+                `;
+
+                const overlay = document.createElement('div');
+                overlay.id = "overlay";
+
+                document.body.appendChild(overlay);
+                document.body.appendChild(alertBox);
+            }
+
+            function closeCustomAlert() {
+                document.getElementById("customAlert").remove();
+                document.getElementById("overlay").remove();
+            }
+
+            // Event Handlers
+            $('#whatsappBtn').click(sendToWhatsApp);
+            $('#bankDetailsBtn').click(function() {
+                $('#bankDetails').toggleClass('hidden');
+            });
+            $('#policyBtn').click(function() {
+                $('#policy').toggleClass('hidden');
+            });
+            $('#paymentBtn').click(function() {
+                $('#paymentMethods').toggleClass('hidden');
+            });
+
+            // Initial Load
+            $('#date').attr("min", new Date().toISOString().split("T")[0]);
+
+            // Attach functions to events
+            $('#chalets, #dayType').change(updateDayOptions);
+            $('#chalets, #dayType, #days, #date').change(updatePrice);
+        });
+    </script>
+
+
+</body></html>
